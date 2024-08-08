@@ -1,38 +1,125 @@
-### Mô tả Hệ thống Quản lý Group 
+# Dự Án Quản Lý Nhóm và Blog
 
-Hệ thống này bao gồm nhiều group và cho phép người dùng quản lý các group và bài viết blog một cách linh hoạt. Dưới đây là mô tả chi tiết về hệ thống thống qua thiết kế :
+## Tổng Quan
 
-#### 1. Bảng `Users`
-Bảng `Users` chứa thông tin về người dùng trong hệ thống.
-- **user_id (PK)**: ID người dùng, khóa chính.
-- **username**: Tên người dùng, duy nhất và không được trùng lặp.
-- **password**: Mật khẩu người dùng.
-- **email**: Email của người dùng, duy nhất và không được trùng lặp.
-- **is_active**: Trạng thái hoạt động của tài khoản (TRUE: hoạt động, FALSE: không hoạt động).
-- **created_at**: Thời điểm tạo tài khoản.
-- **updated_at**: Thời điểm cập nhật tài khoản lần cuối.
+Dự án quản lý nhóm và blog cung cấp một nền tảng để quản lý người dùng, nhóm, bài viết nhóm và cá nhân, cùng với các thông báo và tệp đính kèm. Hệ thống cho phép người dùng tạo và tham gia các nhóm, viết và quản lý các bài viết, mời người khác tham gia nhóm và nhận thông báo.
 
-#### 2. Bảng `Groups`
-Bảng `Groups` chứa thông tin về các group trong hệ thống.
-- **group_id (PK)**: ID của group, khóa chính.
-- **group_name**: Tên của group.
-- **created_by (FK)**: ID của người dùng đã tạo group (liên kết với `user_id` trong bảng `Users`).
-- **created_at**: Thời điểm tạo group.
+## Cấu Trúc Cơ Sở Dữ Liệu
 
-#### 3. Bảng `Blogs`
-Bảng `Blogs` chứa thông tin về các bài viết blog trong hệ thống.
-- **blog_id (PK)**: ID của bài viết, khóa chính.
-- **title**: Tiêu đề của bài viết.
-- **content**: Nội dung của bài viết.
-- **author_id (FK)**: ID của người viết bài (liên kết với `user_id` trong bảng `Users`).
-- **group_id (FK)**: ID của group chứa bài viết (liên kết với `group_id` trong bảng `Groups`).
-- **is_public**: Trạng thái công khai của bài viết (TRUE: công khai, FALSE: riêng tư).
-- **created_at**: Thời điểm tạo bài viết.
-- **updated_at**: Thời điểm cập nhật bài viết lần cuối.
+### Các Bảng
 
-#### 4. Bảng `UserGroups`
-Bảng `UserGroups` chứa thông tin về mối quan hệ giữa người dùng và các group.
-- **user_group_id (PK)**: ID duy nhất của mối quan hệ người dùng-group, khóa chính.
-- **user_id (FK)**: ID của người dùng (liên kết với `user_id` trong bảng `Users`).
-- **group_id (FK)**: ID của group (liên kết với `group_id` trong bảng `Groups`).
-- **role**: Vai trò của người dùng trong group (ví dụ: admin, moderator, member).
+- **Bảng `users`**
+  - `id` (Primary Key)
+  - `username` (Unique)
+  - `password`
+  - `email`
+  - `full_name`
+  - `bio`
+  - `profile_pic`
+  - `created_at`
+
+- **Bảng `groups`**
+  - `id` (Primary Key)
+  - `name`
+  - `description`
+  - `created_by` (Foreign Key to `users.id`)
+  - `created_at`
+
+- **Bảng `group_members`**
+  - `id` (Primary Key)
+  - `group_id` (Foreign Key to `groups.id`)
+  - `user_id` (Foreign Key to `users.id`)
+  - `is_admin` (Boolean)
+  - `joined_at`
+
+- **Bảng `group_invitations`**
+  - `id` (Primary Key)
+  - `group_id` (Foreign Key to `groups.id`)
+  - `invited_user_id` (Foreign Key to `users.id`)
+  - `invited_by` (Foreign Key to `users.id`)
+  - `status` (Pending/Accepted/Rejected)
+  - `invited_at`
+  - `responded_at`
+
+- **Bảng `group_blogs`**
+  - `id` (Primary Key)
+  - `group_id` (Foreign Key to `groups.id`)
+  - `author_id` (Foreign Key to `users.id`)
+  - `title`
+  - `content`
+  - `created_at`
+  - `updated_at`
+
+- **Bảng `personal_blogs`**
+  - `id` (Primary Key)
+  - `author_id` (Foreign Key to `users.id`)
+  - `title`
+  - `content`
+  - `is_public` (Boolean)
+  - `created_at`
+  - `updated_at`
+
+- **Bảng `notifications`**
+  - `id` (Primary Key)
+  - `user_id` (Foreign Key to `users.id`)
+  - `message`
+  - `is_read` (Boolean)
+  - `created_at`
+
+- **Bảng `roles`**
+  - `id` (Primary Key)
+  - `name` (admin, member, ...)
+  - `description`
+
+- **Bảng `group_roles`**
+  - `id` (Primary Key)
+  - `group_id` (Foreign Key to `groups.id`)
+  - `user_id` (Foreign Key to `users.id`)
+  - `role_id` (Foreign Key to `roles.id`)
+
+- **Bảng `comments`**
+  - `id` (Primary Key)
+  - `blog_id` (Foreign Key to `group_blogs.id` or `personal_blogs.id`)
+  - `author_id` (Foreign Key to `users.id`)
+  - `content`
+  - `created_at`
+  - `updated_at`
+
+- **Bảng `files`**
+  - `id` (Primary Key)
+  - `blog_id` (Foreign Key to `group_blogs.id` or `personal_blogs.id`)
+  - `file_path`
+  - `file_name`
+  - `uploaded_at`
+
+## Mối Quan Hệ Giữa Các Bảng
+
+### Liên Kết Chính
+
+- **Bảng `users`** liên kết với nhiều bảng khác qua `id`:
+  - `created_by` trong bảng `groups` tham chiếu đến `id` của bảng `users`.
+  - `user_id` trong bảng `group_members`, `group_invitations`, và `notifications` tham chiếu đến `id` của bảng `users`.
+  - `author_id` trong bảng `group_blogs` và `personal_blogs` tham chiếu đến `id` của bảng `users`.
+
+- **Bảng `groups`** liên kết với nhiều bảng khác qua `id`:
+  - `group_id` trong bảng `group_members`, `group_invitations`, và `group_blogs` tham chiếu đến `id` của bảng `groups`.
+
+- **Bảng `group_blogs`** và **`personal_blogs`** liên kết với bảng `users` và bảng `comments` qua `author_id` và `blog_id`:
+  - `blog_id` trong bảng `comments` và `files` tham chiếu đến `id` của bảng `group_blogs` hoặc `personal_blogs`.
+
+- **Bảng `group_roles`** liên kết với bảng `groups`, `users`, và `roles`:
+  - `group_id` tham chiếu đến `id` của bảng `groups`.
+  - `user_id` tham chiếu đến `id` của bảng `users`.
+  - `role_id` tham chiếu đến `id` của bảng `roles`.
+
+## Quy Trình Hoạt Động
+
+1. **Người dùng đăng ký và đăng nhập** vào hệ thống.
+2. **Người dùng tạo và quản lý nhóm**, tham gia nhóm, và mời người khác tham gia.
+3. **Người dùng viết và quản lý các bài viết** trong nhóm hoặc cá nhân.
+4. **Người dùng bình luận và tải lên tệp** đính kèm cho các bài viết.
+5. **Người dùng nhận thông báo** về các sự kiện quan trọng liên quan đến họ.
+6. **Quản lý vai trò** trong các nhóm để xác định quyền hạn của người dùng.
+
+-.
+[dbdiagram](https://dbdiagram.io/d/66b496e68b4bb5230e931c71)
