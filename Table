@@ -1,0 +1,42 @@
+1. Bảng users:
+Chứa thông tin về người dùng, bao gồm các trường như id, username, password, email, full_name, bio, profile_pic, và created_at.
+2. Bảng groups:
+Chứa thông tin về các nhóm, bao gồm các trường như id, name, description, created_by (liên kết với người tạo nhóm), và created_at.
+3. Bảng group_members:
+Quản lý thông tin về thành viên của các nhóm, bao gồm id, group_id (liên kết với nhóm), user_id (liên kết với người dùng), is_admin (cho biết người dùng có phải là admin của nhóm không), và joined_at.
+4. Bảng group_invitations:
+Quản lý các lời mời tham gia nhóm, bao gồm id, group_id (liên kết với nhóm), invited_user_id (người dùng được mời), invited_by (người gửi lời mời), status (trạng thái của lời mời), invited_at, và responded_at.
+5. Bảng group_blogs:
+Quản lý các bài blog trong nhóm, bao gồm id, group_id (liên kết với nhóm), author_id (người tạo blog), title, content, created_at, và updated_at.
+6. Bảng personal_blogs:
+Quản lý các bài blog cá nhân, bao gồm id, author_id (người tạo blog), title, content, is_public (cho biết blog có công khai không), created_at, và updated_at.
+7. Bảng notifications:
+Quản lý các thông báo gửi đến người dùng, bao gồm id, user_id (người nhận thông báo), message, is_read, và created_at.
+8. Bảng roles:
+Quản lý các vai trò trong nhóm, bao gồm id, name (tên vai trò, như 'admin' hoặc 'member'), và description.
+9. Bảng group_roles:
+Kết nối giữa người dùng, nhóm và vai trò, bao gồm id, group_id, user_id, và role_id.
+10. Bảng comments:
+Quản lý các bình luận trên blog, bao gồm id, blog_id (liên kết với bài blog), author_id (người viết bình luận), content, created_at, và updated_at.
+11. Bảng files:
+Quản lý các tệp tin đính kèm trong các bài blog, bao gồm id, blog_id (liên kết với bài blog), file_path, file_name, và uploaded_at.
+Mối quan hệ giữa các bảng:
+groups.created_by > users.id: Người dùng (users.id) là người tạo ra nhóm (groups.created_by).
+group_members.group_id > groups.id: Thành viên nhóm (group_members.group_id) thuộc về một nhóm (groups.id).
+group_members.user_id > users.id: Thành viên nhóm (group_members.user_id) là một người dùng cụ thể (users.id).
+group_invitations.group_id > groups.id: Lời mời tham gia nhóm (group_invitations.group_id) thuộc về một nhóm (groups.id).
+group_invitations.invited_user_id > users.id: Người dùng được mời (group_invitations.invited_user_id) là một người dùng cụ thể (users.id).
+group_invitations.invited_by > users.id: Người gửi lời mời (group_invitations.invited_by) là một người dùng cụ thể (users.id).
+group_blogs.group_id > groups.id: Bài blog trong nhóm (group_blogs.group_id) thuộc về một nhóm (groups.id).
+group_blogs.author_id > users.id: Người tạo blog trong nhóm (group_blogs.author_id) là một người dùng cụ thể (users.id).
+personal_blogs.author_id > users.id: Người tạo blog cá nhân (personal_blogs.author_id) là một người dùng cụ thể (users.id).
+notifications.user_id > users.id: Thông báo (notifications.user_id) thuộc về một người dùng cụ thể (users.id).
+group_roles.group_id > groups.id: Vai trò trong nhóm (group_roles.group_id) thuộc về một nhóm (groups.id).
+group_roles.user_id > users.id: Vai trò trong nhóm (group_roles.user_id) thuộc về một người dùng cụ thể (users.id).
+group_roles.role_id > roles.id: Vai trò trong nhóm (group_roles.role_id) là một vai trò cụ thể (roles.id).
+comments.blog_id > group_blogs.id: Bình luận (comments.blog_id) thuộc về một blog trong nhóm (group_blogs.id).
+comments.blog_id > personal_blogs.id: Bình luận (comments.blog_id) thuộc về một blog cá nhân (personal_blogs.id).
+comments.author_id > users.id: Người viết bình luận (comments.author_id) là một người dùng cụ thể (users.id).
+files.blog_id > group_blogs.id: Tệp tin đính kèm (files.blog_id) thuộc về một blog trong nhóm (group_blogs.id).
+files.blog_id > personal_blogs.id: Tệp tin đính kèm (files.blog_id) thuộc về một blog cá nhân (personal_blogs.id).
+Tất cả các mối quan hệ này giúp đảm bảo tính nhất quán dữ liệu và liên kết chặt chẽ giữa các bảng trong cơ sở dữ liệu.
