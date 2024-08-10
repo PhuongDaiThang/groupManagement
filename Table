@@ -1,42 +1,75 @@
-1. Bảng users:
-Chứa thông tin về người dùng, bao gồm các trường như id, username, password, email, full_name, bio, profile_pic, và created_at.
-2. Bảng groups:
-Chứa thông tin về các nhóm, bao gồm các trường như id, name, description, created_by (liên kết với người tạo nhóm), và created_at.
-3. Bảng group_members:
-Quản lý thông tin về thành viên của các nhóm, bao gồm id, group_id (liên kết với nhóm), user_id (liên kết với người dùng), is_admin (cho biết người dùng có phải là admin của nhóm không), và joined_at.
-4. Bảng group_invitations:
-Quản lý các lời mời tham gia nhóm, bao gồm id, group_id (liên kết với nhóm), invited_user_id (người dùng được mời), invited_by (người gửi lời mời), status (trạng thái của lời mời), invited_at, và responded_at.
-5. Bảng group_blogs:
-Quản lý các bài blog trong nhóm, bao gồm id, group_id (liên kết với nhóm), author_id (người tạo blog), title, content, created_at, và updated_at.
-6. Bảng personal_blogs:
-Quản lý các bài blog cá nhân, bao gồm id, author_id (người tạo blog), title, content, is_public (cho biết blog có công khai không), created_at, và updated_at.
-7. Bảng notifications:
-Quản lý các thông báo gửi đến người dùng, bao gồm id, user_id (người nhận thông báo), message, is_read, và created_at.
-8. Bảng roles:
-Quản lý các vai trò trong nhóm, bao gồm id, name (tên vai trò, như 'admin' hoặc 'member'), và description.
-9. Bảng group_roles:
-Kết nối giữa người dùng, nhóm và vai trò, bao gồm id, group_id, user_id, và role_id.
-10. Bảng comments:
-Quản lý các bình luận trên blog, bao gồm id, blog_id (liên kết với bài blog), author_id (người viết bình luận), content, created_at, và updated_at.
-11. Bảng files:
-Quản lý các tệp tin đính kèm trong các bài blog, bao gồm id, blog_id (liên kết với bài blog), file_path, file_name, và uploaded_at.
-Mối quan hệ giữa các bảng:
-groups.created_by > users.id: Người dùng (users.id) là người tạo ra nhóm (groups.created_by).
-group_members.group_id > groups.id: Thành viên nhóm (group_members.group_id) thuộc về một nhóm (groups.id).
-group_members.user_id > users.id: Thành viên nhóm (group_members.user_id) là một người dùng cụ thể (users.id).
-group_invitations.group_id > groups.id: Lời mời tham gia nhóm (group_invitations.group_id) thuộc về một nhóm (groups.id).
-group_invitations.invited_user_id > users.id: Người dùng được mời (group_invitations.invited_user_id) là một người dùng cụ thể (users.id).
-group_invitations.invited_by > users.id: Người gửi lời mời (group_invitations.invited_by) là một người dùng cụ thể (users.id).
-group_blogs.group_id > groups.id: Bài blog trong nhóm (group_blogs.group_id) thuộc về một nhóm (groups.id).
-group_blogs.author_id > users.id: Người tạo blog trong nhóm (group_blogs.author_id) là một người dùng cụ thể (users.id).
-personal_blogs.author_id > users.id: Người tạo blog cá nhân (personal_blogs.author_id) là một người dùng cụ thể (users.id).
-notifications.user_id > users.id: Thông báo (notifications.user_id) thuộc về một người dùng cụ thể (users.id).
-group_roles.group_id > groups.id: Vai trò trong nhóm (group_roles.group_id) thuộc về một nhóm (groups.id).
-group_roles.user_id > users.id: Vai trò trong nhóm (group_roles.user_id) thuộc về một người dùng cụ thể (users.id).
-group_roles.role_id > roles.id: Vai trò trong nhóm (group_roles.role_id) là một vai trò cụ thể (roles.id).
-comments.blog_id > group_blogs.id: Bình luận (comments.blog_id) thuộc về một blog trong nhóm (group_blogs.id).
-comments.blog_id > personal_blogs.id: Bình luận (comments.blog_id) thuộc về một blog cá nhân (personal_blogs.id).
-comments.author_id > users.id: Người viết bình luận (comments.author_id) là một người dùng cụ thể (users.id).
-files.blog_id > group_blogs.id: Tệp tin đính kèm (files.blog_id) thuộc về một blog trong nhóm (group_blogs.id).
-files.blog_id > personal_blogs.id: Tệp tin đính kèm (files.blog_id) thuộc về một blog cá nhân (personal_blogs.id).
-Tất cả các mối quan hệ này giúp đảm bảo tính nhất quán dữ liệu và liên kết chặt chẽ giữa các bảng trong cơ sở dữ liệu.
+## Bảng `users`
+
+Bảng `users` lưu trữ thông tin về tất cả các người dùng trong hệ thống. Đây là bảng quan trọng nhất vì nó xác định danh tính của người dùng và liên kết với nhiều bảng khác.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi người dùng.
+- **username** (Unique): Tên đăng nhập của người dùng, không trùng lặp.
+- **password**: Mật khẩu của người dùng, được mã hóa.
+- **email**: Địa chỉ email của người dùng, dùng để liên lạc và xác thực.
+- **full_name**: Tên đầy đủ của người dùng.
+- **bio**: Thông tin ngắn về bản thân người dùng.
+- **profile_pic**: Đường dẫn đến ảnh đại diện của người dùng.
+- **created_at**: Thời gian tạo tài khoản.
+
+## Bảng `groups`
+
+Bảng `groups` lưu trữ thông tin về các nhóm trong hệ thống. Một nhóm có thể được tạo ra bởi bất kỳ người dùng nào và có thể chứa nhiều thành viên.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi nhóm.
+- **name**: Tên của nhóm.
+- **description**: Mô tả về nhóm.
+- **created_by** (Foreign Key to `users.id`): Mã định danh của người tạo nhóm.
+- **created_at**: Thời gian tạo nhóm.
+
+## Bảng `group_members`
+
+Bảng `group_members` lưu trữ thông tin về các thành viên trong mỗi nhóm. Bảng này xác định ai là thành viên của nhóm nào và vai trò của họ.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi thành viên nhóm.
+- **group_id** (Foreign Key to `groups.id`): Mã định danh của nhóm.
+- **user_id** (Foreign Key to `users.id`): Mã định danh của người dùng.
+- **is_admin** (Boolean): Xác định xem người dùng có phải là quản trị viên của nhóm không.
+- **joined_at**: Thời gian người dùng tham gia nhóm.
+
+## Bảng `group_invitations`
+
+Bảng `group_invitations` lưu trữ các lời mời tham gia nhóm. Khi một người dùng muốn mời người khác tham gia nhóm, lời mời này sẽ được lưu trong bảng này.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi lời mời.
+- **group_id** (Foreign Key to `groups.id`): Mã định danh của nhóm mời.
+- **invited_user_id** (Foreign Key to `users.id`): Mã định danh của người được mời.
+- **invited_by** (Foreign Key to `users.id`): Mã định danh của người gửi lời mời.
+- **status** (Pending/Accepted/Rejected): Trạng thái của lời mời.
+- **invited_at**: Thời gian gửi lời mời.
+- **responded_at**: Thời gian phản hồi lời mời.
+
+## Bảng `group_roles`
+
+Bảng `group_roles` lưu trữ thông tin về vai trò của người dùng trong các nhóm. Nó xác định người dùng có vai trò gì trong một nhóm cụ thể.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi vai trò nhóm.
+- **group_id** (Foreign Key to `groups.id`): Mã định danh của nhóm.
+- **user_id** (Foreign Key to `users.id`): Mã định danh của người dùng.
+- **role_id** (Foreign Key to `roles.id`): Mã định danh của vai trò.
+
+## Bảng `comments`
+
+Bảng `comments` lưu trữ các bình luận của người dùng trên các bài viết. Mỗi bình luận được liên kết với một bài viết cụ thể, có thể là của nhóm hoặc cá nhân.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi bình luận.
+- **blog_id** (Foreign Key to `group_blogs.id` hoặc `personal_blogs.id`): Mã định danh của bài viết mà bình luận liên quan đến.
+- **author_id** (Foreign Key to `users.id`): Mã định danh của người viết bình luận.
+- **content**: Nội dung bình luận.
+- **created_at**: Thời gian tạo bình luận.
+- **updated_at**: Thời gian cập nhật bình luận lần cuối.
+
+## Bảng `files`
+
+Bảng `files` lưu trữ các tệp đính kèm được tải lên cùng với bài viết. Tệp này có thể là hình ảnh, tài liệu, hoặc các loại tệp khác hỗ trợ bài viết.
+
+- **id** (Primary Key): Mã định danh duy nhất cho mỗi tệp.
+- **blog_id** (Foreign Key to `group_blogs.id` hoặc `personal_blogs.id`): Mã định danh của bài viết mà tệp liên quan đến.
+- **file_path**: Đường dẫn đến tệp được lưu trữ.
+- **file_name**: Tên của tệp.
+- **uploaded_at**: Thời gian tệp được tải lên.
+
