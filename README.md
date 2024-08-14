@@ -92,26 +92,6 @@ Dự án quản lý nhóm và blog cung cấp một nền tảng để quản l�
   - `file_name`
   - `uploaded_at`
 
-## Mối Quan Hệ Giữa Các Bảng
-
-### Liên Kết Chính
-
-- **Bảng `users`** liên kết với nhiều bảng khác qua `id`:
-  - `created_by` trong bảng `groups` tham chiếu đến `id` của bảng `users`.
-  - `user_id` trong bảng `group_members`, `group_invitations`, và `notifications` tham chiếu đến `id` của bảng `users`.
-  - `author_id` trong bảng `group_blogs` và `personal_blogs` tham chiếu đến `id` của bảng `users`.
-
-- **Bảng `groups`** liên kết với nhiều bảng khác qua `id`:
-  - `group_id` trong bảng `group_members`, `group_invitations`, và `group_blogs` tham chiếu đến `id` của bảng `groups`.
-
-- **Bảng `group_blogs`** và **`personal_blogs`** liên kết với bảng `users` và bảng `comments` qua `author_id` và `blog_id`:
-  - `blog_id` trong bảng `comments` và `files` tham chiếu đến `id` của bảng `group_blogs` hoặc `personal_blogs`.
-
-- **Bảng `group_roles`** liên kết với bảng `groups`, `users`, và `roles`:
-  - `group_id` tham chiếu đến `id` của bảng `groups`.
-  - `user_id` tham chiếu đến `id` của bảng `users`.
-  - `role_id` tham chiếu đến `id` của bảng `roles`.
-
 ## Quy Trình Hoạt Động
 
 1. **Người dùng đăng ký và đăng nhập** vào hệ thống.
