@@ -83,7 +83,7 @@
 - **file_name**: Tên của tệp.
 - **uploaded_at**: Thời gian tệp được tải lên.
 
-## Các Liên Kết (References)
+## Các Liên Kết 
 
 - **`groups.created_by` > `users.id`**: Xác định người dùng nào đã tạo ra nhóm.
 - **`group_members.group_id` > `groups.id`**: Xác định nhóm mà thành viên thuộc về.
