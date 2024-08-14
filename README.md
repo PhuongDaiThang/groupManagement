@@ -4,93 +4,52 @@
 
 Dự án quản lý nhóm và blog cung cấp một nền tảng để quản lý người dùng, nhóm, bài viết nhóm và cá nhân, cùng với các thông báo và tệp đính kèm. Hệ thống cho phép người dùng tạo và tham gia các nhóm, viết và quản lý các bài viết, mời người khác tham gia nhóm và nhận thông báo.
 
-## Cấu Trúc Cơ Sở Dữ Liệu
 
-### Các Bảng
+## Các Bảng Chính
+### 1. Bảng `users`
+- **Mô tả**: Lưu trữ thông tin cá nhân của người dùng như tên đăng nhập, mật khẩu, email, và thông tin cá nhân khác.
+- **Chức năng**: Quản lý danh sách người dùng trong hệ thống.
 
-- **Bảng `users`**
-  - `id` (Primary Key)
-  - `username` (Unique)
-  - `password`
-  - `email`
-  - `full_name`
-  - `bio`
-  - `profile_pic`
-  - `created_at`
+### 2. Bảng `groups`
+- **Mô tả**: Lưu trữ thông tin về các nhóm như tên nhóm, mô tả nhóm, và người tạo nhóm.
+- **Chức năng**: Quản lý các nhóm mà người dùng có thể tham gia.
 
-- **Bảng `groups`**
-  - `id` (Primary Key)
-  - `name`
-  - `description`
-  - `created_by` (Foreign Key to `users.id`)
-  - `created_at`
+### 3. Bảng `group_members`
+- **Mô tả**: Quản lý thông tin thành viên của các nhóm, bao gồm vai trò của họ trong nhóm.
+- **Chức năng**: Theo dõi các thành viên và quyền hạn của họ trong các nhóm.
 
-- **Bảng `group_members`**
-  - `id` (Primary Key)
-  - `group_id` (Foreign Key to `groups.id`)
-  - `user_id` (Foreign Key to `users.id`)
-  - `is_admin` (Boolean)
-  - `joined_at`
+### 4. Bảng `group_invitations`
+- **Mô tả**: Lưu trữ thông tin về các lời mời tham gia nhóm, bao gồm trạng thái và thời gian phản hồi.
+- **Chức năng**: Quản lý các lời mời đến các người dùng khác để tham gia vào nhóm.
 
-- **Bảng `group_invitations`**
-  - `id` (Primary Key)
-  - `group_id` (Foreign Key to `groups.id`)
-  - `invited_user_id` (Foreign Key to `users.id`)
-  - `invited_by` (Foreign Key to `users.id`)
-  - `status` (Pending/Accepted/Rejected)
-  - `invited_at`
-  - `responded_at`
+### 5. Bảng `group_blogs`
+- **Mô tả**: Lưu trữ các bài viết được đăng trong các nhóm.
+- **Chức năng**: Quản lý nội dung do các thành viên của nhóm tạo ra.
 
-- **Bảng `group_blogs`**
-  - `id` (Primary Key)
-  - `group_id` (Foreign Key to `groups.id`)
-  - `author_id` (Foreign Key to `users.id`)
-  - `title`
-  - `content`
-  - `created_at`
-  - `updated_at`
+### 6. Bảng `personal_blogs`
+- **Mô tả**: Lưu trữ các bài viết cá nhân của người dùng.
+- **Chức năng**: Cho phép người dùng đăng bài viết cá nhân, với tùy chọn công khai hoặc riêng tư.
 
-- **Bảng `personal_blogs`**
-  - `id` (Primary Key)
-  - `author_id` (Foreign Key to `users.id`)
-  - `title`
-  - `content`
-  - `is_public` (Boolean)
-  - `created_at`
-  - `updated_at`
+### 7. Bảng `notifications`
+- **Mô tả**: Quản lý các thông báo gửi đến người dùng.
+- **Chức năng**: Cung cấp hệ thống thông báo cho người dùng về các sự kiện quan trọng.
 
-- **Bảng `notifications`**
-  - `id` (Primary Key)
-  - `user_id` (Foreign Key to `users.id`)
-  - `message`
-  - `is_read` (Boolean)
-  - `created_at`
+### 8. Bảng `roles`
+- **Mô tả**: Lưu trữ các vai trò của người dùng trong hệ thống.
+- **Chức năng**: Định nghĩa và quản lý các vai trò mà người dùng có thể nắm giữ.
 
-- **Bảng `roles`**
-  - `id` (Primary Key)
-  - `name` (admin, member, ...)
-  - `description`
+### 9. Bảng `group_roles`
+- **Mô tả**: Lưu trữ vai trò của người dùng trong các nhóm cụ thể.
+- **Chức năng**: Quản lý quyền hạn của người dùng trong từng nhóm.
 
-- **Bảng `group_roles`**
-  - `id` (Primary Key)
-  - `group_id` (Foreign Key to `groups.id`)
-  - `user_id` (Foreign Key to `users.id`)
-  - `role_id` (Foreign Key to `roles.id`)
+### 10. Bảng `comments`
+- **Mô tả**: Lưu trữ các bình luận của người dùng trên các bài viết.
+- **Chức năng**: Quản lý tương tác của người dùng thông qua các bình luận.
 
-- **Bảng `comments`**
-  - `id` (Primary Key)
-  - `blog_id` (Foreign Key to `group_blogs.id` or `personal_blogs.id`)
-  - `author_id` (Foreign Key to `users.id`)
-  - `content`
-  - `created_at`
-  - `updated_at`
+### 11. Bảng `files`
+- **Mô tả**: Lưu trữ các tệp tin liên quan đến bài viết.
+- **Chức năng**: Quản lý các tệp đính kèm trong các bài viết, bao gồm tệp tin và thời gian tải lên.
 
-- **Bảng `files`**
-  - `id` (Primary Key)
-  - `blog_id` (Foreign Key to `group_blogs.id` or `personal_blogs.id`)
-  - `file_path`
-  - `file_name`
-  - `uploaded_at`
 
 ## Quy Trình Hoạt Động
 
